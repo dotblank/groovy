@@ -17,8 +17,13 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QModelIndex>
+#include <QBuffer>
+#include <phonon>
+#include <QNetworkReply>
 
 class GrooveSearchModel;
+//class Phonon::MediaObject;
 
 namespace Ui {
     class MainWindow;
@@ -38,10 +43,16 @@ protected:
 private slots:
     void onConnected();
     void onSearchButtonPress();
+    void onSongClicked(const QModelIndex &index);
+    void onStreamingStarted(QNetworkReply *);
+    void onStreamReadReady();
+    void onStreamingFinished();
 
 private:
     Ui::MainWindow *m_ui;
     GrooveSearchModel *m_searchModel;
+    Phonon::MediaObject *m_mediaObject;
+    QBuffer m_audioBuffer;
 };
 
 #endif // MAINWINDOW_H

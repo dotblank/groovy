@@ -3,7 +3,7 @@
 ######################################################################
 
 TEMPLATE = app
-QT += network gui
+QT += network gui phonon
 TARGET = 
 DEPENDPATH += .
 INCLUDEPATH += .

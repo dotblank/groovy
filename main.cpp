@@ -20,6 +20,7 @@
 int main(int argc, char **argv)
 {
     QApplication qca(argc, argv);
+    qca.setApplicationName("Groovy");
 
     MainWindow mw;
     mw.show();
