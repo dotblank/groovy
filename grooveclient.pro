@@ -7,13 +7,13 @@ QT += network gui phonon
 TARGET = 
 DEPENDPATH += .
 INCLUDEPATH += .
-INCLUDEPATH += ../libgroove/
+INCLUDEPATH += ../libgroove/include/
 
 # Input
 SOURCES += main.cpp \
     mainwindow.cpp
 
-LIBS += ../libgroove-build-desktop/libgroove.so
+LIBS += ../libgroove-build-desktop/src/libgroove.so
 
 HEADERS += \
     mainwindow.h
