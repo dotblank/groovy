@@ -23,7 +23,7 @@
 #include <QNetworkReply>
 
 class GrooveSearchModel;
-//class Phonon::MediaObject;
+class GroovePlaylistModel;
 
 namespace Ui {
     class MainWindow;
@@ -43,7 +43,8 @@ protected:
 private slots:
     void onConnected();
     void onSearchButtonPress();
-    void onSongClicked(const QModelIndex &index);
+    void onQueueSong(const QModelIndex &index);
+    void advanceToNextSongInPlaylist();
     void onStreamingStarted(QNetworkReply *);
     void onStreamReadReady();
     void onStreamingFinished();
@@ -51,8 +52,12 @@ private slots:
 private:
     Ui::MainWindow *m_ui;
     GrooveSearchModel *m_searchModel;
+    GroovePlaylistModel *m_playlistModel;
     Phonon::MediaObject *m_mediaObject;
     QBuffer m_audioBuffer;
+
+    // we don't own this!
+    QNetworkReply *m_currentStream;
 };
 
 #endif // MAINWINDOW_H

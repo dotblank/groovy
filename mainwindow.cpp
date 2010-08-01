@@ -19,6 +19,7 @@
 #include "grooveclient.h"
 #include "groovesong.h"
 #include "groovesearchmodel.h"
+#include "grooveplaylistmodel.h"
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -32,19 +33,24 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     m_ui(new Ui::MainWindow),
     m_searchModel(new GrooveSearchModel(this)),
-    m_mediaObject(new Phonon::MediaObject(this))
+    m_playlistModel(new GroovePlaylistModel(this)),
+    m_mediaObject(new Phonon::MediaObject(this)),
+    m_currentStream(0)
 {
     GrooveClient::instance()->establishConnection();
     connect(GrooveClient::instance(), SIGNAL(connected()), SLOT(onConnected()));
 
     m_ui->setupUi(this);
     m_ui->searchResults->setModel(m_searchModel);
+    m_ui->playlistView->setModel(m_playlistModel);
 
     connect(m_ui->pushButton, SIGNAL(clicked()), this, SLOT(onSearchButtonPress()));
-    connect(m_ui->searchResults, SIGNAL(clicked(QModelIndex)), SLOT(onSongClicked(QModelIndex)));
+    connect(m_ui->searchResults, SIGNAL(doubleClicked(QModelIndex)), SLOT(onQueueSong(QModelIndex)));
 
     Phonon::AudioOutput *audioOutput = new Phonon::AudioOutput(Phonon::MusicCategory, this);
     Phonon::createPath(m_mediaObject, audioOutput);
+
+    connect(m_mediaObject, SIGNAL(finished()), SLOT(advanceToNextSongInPlaylist()));
 }
 
 MainWindow::~MainWindow()
@@ -75,16 +81,27 @@ void MainWindow::onSearchButtonPress()
     m_searchModel->searchBySong(m_ui->lineEdit->text());
 }
 
-void MainWindow::onSongClicked(const QModelIndex &index)
+void MainWindow::onQueueSong(const QModelIndex &index)
 {
-    qDebug() << Q_FUNC_INFO << "Playing song " << index.row();
     GrooveSong *song = m_searchModel->songByIndex(index);
-    Q_ASSERT(song);
+    qDebug() << Q_FUNC_INFO << "Queueing " << song->songName();
+
+    m_playlistModel->append(song);
+
+    if (m_currentStream == 0)
+        advanceToNextSongInPlaylist();
+}
+
+void MainWindow::advanceToNextSongInPlaylist()
+{
+    GrooveSong *song = m_playlistModel->next();
 
     if (!song) {
-        qWarning() << Q_FUNC_INFO << "Got 0 instead of a song pointer";
+        // end of the playlist, for now!
         return;
     }
+
+    qDebug() << Q_FUNC_INFO << "Playing " << song->songName();
 
     connect(song, SIGNAL(streamingStarted(QNetworkReply*)), SLOT(onStreamingStarted(QNetworkReply*)));
     song->startStreaming();
@@ -98,6 +115,8 @@ void MainWindow::onStreamingStarted(QNetworkReply *httpStream)
 
     connect(httpStream, SIGNAL(readyRead()), SLOT(onStreamReadReady()));
     connect(httpStream, SIGNAL(finished()), SLOT(onStreamingFinished()));
+
+    m_currentStream = httpStream;
 }
 
 void MainWindow::onStreamReadReady()
@@ -117,6 +136,11 @@ void MainWindow::onStreamReadReady()
 void MainWindow::onStreamingFinished()
 {
     qDebug() << Q_FUNC_INFO << "finished.";
-    m_mediaObject->setCurrentSource(Phonon::MediaSource(&m_audioBuffer));
-    m_mediaObject->play();
+
+    if (m_mediaObject->state() != Phonon::PlayingState && m_mediaObject->state() != Phonon::BufferingState) {
+        m_mediaObject->setCurrentSource(Phonon::MediaSource(&m_audioBuffer));
+        m_mediaObject->play();
+    }
+
+    m_currentStream = 0;
 }
