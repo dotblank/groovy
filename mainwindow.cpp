@@ -24,11 +24,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-class GrooveStream : public Phonon::AbstractMediaStream
-{
-    friend class MainWindow;
-};
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     m_ui(new Ui::MainWindow),
