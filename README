@@ -1,0 +1,19 @@
+what is this?
+=============
+
+A Qt client to use Grooveshark, the demo-client for libgroove
+(http://github.com/rburchell/libgroove).
+
+It is not all that featureful or pretty right now. Patches welcome.
+
+is this legal?
+=============
+
+I strongly recommend you read and follow Grooveshark's terms of service:
+http://www.grooveshark.com/terms
+
+contact
+=======
+
+All contact regarding this code should go to:
+ robin.burchell@collabora.co.uk
