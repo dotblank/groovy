@@ -35,7 +35,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_searchModel(new GrooveSearchModel(this)),
     m_playlistModel(new GroovePlaylistModel(this)),
     m_mediaObject(new Phonon::MediaObject(this)),
-    m_currentStream(0)
+    m_playBuffer(0),
+    m_nowStreaming(false)
 {
     GrooveClient::instance()->establishConnection();
     connect(GrooveClient::instance(), SIGNAL(connected()), SLOT(onConnected()));
@@ -50,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
     Phonon::AudioOutput *audioOutput = new Phonon::AudioOutput(Phonon::MusicCategory, this);
     Phonon::createPath(m_mediaObject, audioOutput);
 
-    connect(m_mediaObject, SIGNAL(finished()), SLOT(advanceToNextSongInPlaylist()));
+    connect(m_mediaObject, SIGNAL(finished()), SLOT(playNextSong()));
 }
 
 MainWindow::~MainWindow()
@@ -87,21 +88,30 @@ void MainWindow::onQueueSong(const QModelIndex &index)
     qDebug() << Q_FUNC_INFO << "Queueing " << song->songName();
 
     m_playlistModel->append(song);
-
-    if (m_currentStream == 0)
-        advanceToNextSongInPlaylist();
+    fetchNextSong();
 }
 
-void MainWindow::advanceToNextSongInPlaylist()
+void MainWindow::fetchNextSong()
 {
+    // if we are currently downloading, or there is a song buffered but not played, don't prefetch
+    // (so far, we can only stream one song at a time..)
+    if (m_nowStreaming || m_preloadData.length()) {
+        qDebug() << Q_FUNC_INFO << "Already streaming or we already prefetched, ignoring fetch";
+        return;
+    }
+
     GrooveSong *song = m_playlistModel->next();
 
     if (!song) {
         // end of the playlist, for now!
+        qDebug() << Q_FUNC_INFO << "End of playlist.";
         return;
     }
 
-    qDebug() << Q_FUNC_INFO << "Playing " << song->songName();
+    qDebug() << Q_FUNC_INFO << "Fetching " << song->songName();
+
+    m_nowStreaming = true;
+    // TODO: handle error case to reset m_nowStreaming
 
     connect(song, SIGNAL(streamingStarted(QNetworkReply*)), SLOT(onStreamingStarted(QNetworkReply*)));
     song->startStreaming();
@@ -110,37 +120,55 @@ void MainWindow::advanceToNextSongInPlaylist()
 void MainWindow::onStreamingStarted(QNetworkReply *httpStream)
 {
     qDebug() << Q_FUNC_INFO << "Streaming started... :)";
-    m_mediaObject->stop();
-    m_audioBuffer.buffer().clear();
 
     connect(httpStream, SIGNAL(readyRead()), SLOT(onStreamReadReady()));
     connect(httpStream, SIGNAL(finished()), SLOT(onStreamingFinished()));
-
-    m_currentStream = httpStream;
 }
 
 void MainWindow::onStreamReadReady()
 {
-    //qDebug() << Q_FUNC_INFO << "onStreamReadReady! buffer size is " << m_audioBuffer.buffer().length();
     QIODevice *httpStream = qobject_cast<QIODevice *>(sender());
-    Q_ASSERT(httpStream);
-    if (!httpStream) {
-        qWarning() << Q_FUNC_INFO << "No stream pointer from sender";
-        return;
-    }
+    if (GROOVE_VERIFY(httpStream, "no stream pointer from sender")) return;
 
-    //qDebug() << Q_FUNC_INFO << "Buffer length is now " << m_audioBuffer.buffer().length();
-    m_audioBuffer.buffer().append(httpStream->readAll());
+    m_preloadData.append(httpStream->readAll());
+
+    qDebug() << Q_FUNC_INFO << "Stream data length: " << m_preloadData.length();
 }
 
 void MainWindow::onStreamingFinished()
 {
     qDebug() << Q_FUNC_INFO << "finished.";
+    m_nowStreaming = false;
 
-    if (m_mediaObject->state() != Phonon::PlayingState && m_mediaObject->state() != Phonon::BufferingState) {
-        m_mediaObject->setCurrentSource(Phonon::MediaSource(&m_audioBuffer));
-        m_mediaObject->play();
+    if (m_mediaObject->state() != Phonon::PlayingState) {
+        qDebug() << Q_FUNC_INFO << "Initiating play.";
+        playNextSong();
+    }
+}
+
+void MainWindow::playNextSong()
+{
+    // if there is no data to play, or the stream is still downloading, don't do anything here
+    if (m_preloadData.length() == 0 || m_nowStreaming) {
+        qDebug() << Q_FUNC_INFO << "No data to play or stream is still downloading.";
+        qDebug() << Q_FUNC_INFO << m_nowStreaming << " and data length is " << m_preloadData.length();
+        return;
     }
 
-    m_currentStream = 0;
+    qDebug() << Q_FUNC_INFO << "Swapping buffers, and playing, buffer size: " << m_preloadData.size();
+
+    // swap buffer
+    m_playData = m_preloadData;
+
+    // clear preload ready for next stream
+    m_preloadData.clear();
+
+    // tell Phonon about the buffer swap
+    delete m_playBuffer;
+    m_playBuffer = new QBuffer(&m_playData, this);
+    m_mediaObject->enqueue(Phonon::MediaSource(m_playBuffer));
+    m_mediaObject->play();
+
+    // initiate next prefetch
+    fetchNextSong();
 }

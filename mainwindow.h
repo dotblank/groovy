@@ -44,7 +44,8 @@ private slots:
     void onConnected();
     void onSearchButtonPress();
     void onQueueSong(const QModelIndex &index);
-    void advanceToNextSongInPlaylist();
+    void fetchNextSong();
+    void playNextSong();
     void onStreamingStarted(QNetworkReply *);
     void onStreamReadReady();
     void onStreamingFinished();
@@ -54,10 +55,11 @@ private:
     GrooveSearchModel *m_searchModel;
     GroovePlaylistModel *m_playlistModel;
     Phonon::MediaObject *m_mediaObject;
-    QBuffer m_audioBuffer;
+    QBuffer *m_playBuffer;
+    QByteArray m_preloadData;
+    QByteArray m_playData;
 
-    // we don't own this!
-    QNetworkReply *m_currentStream;
+    bool m_nowStreaming;
 };
 
 #endif // MAINWINDOW_H
