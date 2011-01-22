@@ -4,16 +4,16 @@
 
 TEMPLATE = app
 QT += network gui phonon
+CONFIG += link_pkgconfig
+PKGCONFIG += groove
+
 TARGET = 
 DEPENDPATH += .
 INCLUDEPATH += .
-INCLUDEPATH += ../libgroove/include/
 
 # Input
 SOURCES += main.cpp \
     mainwindow.cpp
-
-LIBS += ../libgroove-build-desktop/src/libgroove.so
 
 HEADERS += \
     mainwindow.h
