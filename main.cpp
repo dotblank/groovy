@@ -16,16 +16,35 @@
  */
 
 #include <QApplication>
+#include <QDeclarativeView>
+#include <QDeclarativeContext>
 
-#include "mainwindow.h"
+#include "grooveclient.h"
+#include "groovesong.h"
+#include "groovesearchmodel.h"
+
+#include "playerbackend.h"
 
 int main(int argc, char **argv)
 {
     QApplication qca(argc, argv);
     qca.setApplicationName("Groovy");
 
-    MainWindow mw;
-    mw.show();
+//    MainWindow mw;
+//    mw.show();
+    GrooveClient::instance()->establishConnection();
+
+    GrooveSearchModel searchModel;
+    PlayerBackend playerBackend(0, &searchModel);
+
+    QDeclarativeView view;
+    QDeclarativeContext *context = view.rootContext();
+    context->setContextProperty("searchModel", &searchModel);
+    context->setContextProperty("playerBackend", &playerBackend);
+
+    view.setSource(QUrl::fromLocalFile("mainwindow.qml"));
+    view.show();
+//     QObject *object = view.rootObject();
 
     qca.exec();
 }

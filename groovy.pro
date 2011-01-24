@@ -3,7 +3,7 @@
 ######################################################################
 
 TEMPLATE = app
-QT += network gui phonon
+QT += network gui phonon declarative
 CONFIG += link_pkgconfig
 PKGCONFIG += groove
 
@@ -13,10 +13,10 @@ INCLUDEPATH += .
 
 # Input
 SOURCES += main.cpp \
-    mainwindow.cpp
+    playerbackend.cpp
 
 HEADERS += \
-    mainwindow.h
+    playerbackend.h
 
-FORMS += \
-    mainwindow.ui
+OTHER_FILES += \
+    mainwindow.qml
