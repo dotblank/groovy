@@ -15,7 +15,7 @@ Rectangle {
         Rectangle {
             id: searchListContainer
             x: 0
-            y: 50
+            y: 65
             width: 800
             height: 420
             color: "#000000"
