@@ -24,7 +24,6 @@ Rectangle {
                 id: searchList
                 model: searchModel
                 anchors.fill: parent
-                y: parent.top + 10
 
                 delegate: Component {
                     id: songDelegate
@@ -170,6 +169,33 @@ Rectangle {
             }
         }
     }
+
+    onStateChanged: {
+        if (state == "search") {
+            searchPage.visible = true
+        } else if (state == "songview") {
+            songViewPage.visible = true
+        }
+
+        // timer to hide the old page(s) when the transition is done
+        hptimer.restart()
+    }
+
+    Timer {
+        id: hptimer
+        interval: 3000
+        onTriggered: {
+            if (state == "search") {
+                songViewPage.visible = false
+            } else if (state == "songview") {
+                searchPage.visible = false
+            }
+
+            console.log("hidden inappropriate page")
+        }
+    }
+
+
 
     states: [
         State {
