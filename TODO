@@ -1,0 +1,19 @@
+v0.1 "anasthetic"
+-----------------
+
+- song overview
+- no timed search, search button works just fine
+- cache for album art (see:
+  http://blogs.forum.nokia.com/blog/lauri-jaaskelas-forum-nokia-blog/2011/01/11/qml-network-access-caching)
+- progress bars for loading image art
+
+v0.2 "mantastic"
+----------------
+
+- album overview?
+- history/"now playing" overview/playlist, controls to start/stop/pause/select a track
+
+v0.3 "cosmetic"
+---------------
+
+- favourites?
