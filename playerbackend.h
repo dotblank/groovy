@@ -22,7 +22,7 @@ public slots:
 
 private slots:
     void fetchNextSong();
-    void onStreamingStarted(QNetworkReply *);
+    void onStreamingStarted(QIODevice *);
     void onStreamReadReady();
     void onStreamingFinished();
 

@@ -51,11 +51,11 @@ void PlayerBackend::fetchNextSong()
     m_nowStreaming = true;
     // TODO: handle error case to reset m_nowStreaming
 
-    connect(song, SIGNAL(streamingStarted(QNetworkReply*)), SLOT(onStreamingStarted(QNetworkReply*)));
+    connect(song, SIGNAL(streamingStarted(QIODevice*)), SLOT(onStreamingStarted(QIODevice*)));
     song->startStreaming();
 }
 
-void PlayerBackend::onStreamingStarted(QNetworkReply *httpStream)
+void PlayerBackend::onStreamingStarted(QIODevice *httpStream)
 {
     qDebug() << Q_FUNC_INFO << "Streaming started... :)";
 
