@@ -1,4 +1,5 @@
 import QtQuick 1.0
+import "groovy-ui"
 
 Rectangle {
     id: base
@@ -25,98 +26,14 @@ Rectangle {
                 model: searchModel
                 anchors.fill: parent
 
-                delegate: Component {
-                    id: songDelegate
-                    Rectangle {
-                        width: ListView.view.width
-                        height: 100
-                        color: "#000000"
+                delegate: GrooveSongListDelegate {
 
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                searchPage.selectedRow = index
-                                searchList.currentIndex = index
-                            }
-
-                            Image {
-                                source: coverArtUrl
-                                width: 90
-                                height: 90
-                                x: 5
-
-//                                onStatusChanged: {
-//                                    console.log(status)
-//                                }
-//
-//                                onProgressChanged: {
-//                                    console.log(progress)
-//                                }
-                            }
-                            Text {
-                                x: 100
-                                color: "#ffffff"
-                                text: artist + " - " + title
-                            }
-                        }
-                    }
                 }
             }
         }
 
-        Rectangle {
-            id: searchBar
-            x: 0
-            y: 0
-            width: 800
-            height: 60
-            color: "#000000"
+        GrooveSearchBar {
 
-
-            Rectangle {
-                id: searchEntryPrettyBorder
-                border.color: "#ffffff"
-                color: "#000000"
-                x: 5
-                y: 5
-                width: 790
-                height: 50
-
-                TextEdit {
-                    id: searchEntry
-                    anchors.fill: parent
-                    anchors.margins: 5
-                    text: ""
-                    property string lastSearch
-                    color: "#ffffff"
-
-                    Keys.onReleased: {
-                        console.log("starting search timer")
-                        searchTimer.restart()
-                    }
-
-                    Timer {
-                        id: searchTimer
-                        interval: 1000
-                        onTriggered: {
-                            console.log("doing search")
-                            searchEntry.doSearch();
-                        }
-                    }
-
-                    function doSearch() {
-                        // don't allow duplicate searches
-                        if (searchEntry.lastSearch == searchEntry.text) {
-                            console.log("Ignoring duplicate search")
-                            return
-                        }
-
-                        searchModel.searchBySong(searchEntry.text)
-                        searchEntry.lastSearch = searchEntry.text
-                    }
-                }
-
-            }
         }
     }
 

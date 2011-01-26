@@ -19,4 +19,6 @@ HEADERS += \
     playerbackend.h
 
 OTHER_FILES += \
-    mainwindow.qml
+    mainwindow.qml \
+    groovy-ui/GrooveSongListDelegate.qml \
+    groovy-ui/GrooveSearchBar.qml
