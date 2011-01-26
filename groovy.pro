@@ -5,7 +5,7 @@
 TEMPLATE = app
 QT += network gui phonon declarative
 CONFIG += link_pkgconfig
-PKGCONFIG += groove
+PKGCONFIG += groove QJson
 
 TARGET = 
 DEPENDPATH += .
