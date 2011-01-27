@@ -4,6 +4,7 @@
 
 // Us
 #include "playerbackend.h"
+#include <QtCore/QTime>
 
 PlayerBackend::PlayerBackend(QObject *parent, GrooveSearchModel *searchModel)
     : QObject(parent)
@@ -11,11 +12,56 @@ PlayerBackend::PlayerBackend(QObject *parent, GrooveSearchModel *searchModel)
     , m_mediaObject(new Phonon::MediaObject(this))
     , m_playBuffer(0)
     , m_nowStreaming(false)
+    , m_isPlaying(false)
 {
     Phonon::AudioOutput *audioOutput = new Phonon::AudioOutput(Phonon::MusicCategory, this);
     Phonon::createPath(m_mediaObject, audioOutput);
+    m_mediaObject->setTickInterval(1000);
 
     connect(m_mediaObject, SIGNAL(finished()), SLOT(playNextSong()));
+    connect(m_mediaObject, SIGNAL(stateChanged(Phonon::State,Phonon::State)),
+            SLOT(onStateChanged(Phonon::State)));
+    connect(m_mediaObject, SIGNAL(tick(qint64)), SIGNAL(positionChanged()));
+    connect(m_mediaObject, SIGNAL(totalTimeChanged(qint64)), SIGNAL(albumChanged()));
+}
+
+bool PlayerBackend::isPlaying()
+{
+    return m_isPlaying;
+}
+
+QUrl PlayerBackend::albumArt()
+{
+    GrooveSong *song = m_playlistModel.currentTrack();
+    return (song ? song->coverArtUrl() : QUrl());
+}
+
+qint64 PlayerBackend::totalTimeMS()
+{
+    return m_mediaObject->totalTime();
+}
+
+QString PlayerBackend::totalTime()
+{
+    QTime qt = QTime().addMSecs(m_mediaObject->totalTime());
+    return qt.toString(QLatin1String("mm:ss"));
+}
+
+qint64 PlayerBackend::currentTimeMS()
+{
+    return m_mediaObject->currentTime();
+}
+
+QString PlayerBackend::currentTime()
+{
+    QTime qt = QTime().addMSecs(m_mediaObject->currentTime());
+    return qt.toString(QLatin1String("mm:ss"));
+}
+
+QString PlayerBackend::currentTimeLeft()
+{
+    QTime qt = QTime().addMSecs(m_mediaObject->totalTime() - m_mediaObject->currentTime());
+    return qt.toString(QLatin1String("-mm:ss"));
 }
 
 // TODO: passing QModelIndex directly from QML won't work
@@ -27,6 +73,19 @@ void PlayerBackend::queueSong(int index)
 
     m_playlistModel.append(song);
     fetchNextSong();
+}
+
+void PlayerBackend::stopSong()
+{
+    m_mediaObject->stop();
+}
+
+void PlayerBackend::pausePlaySong()
+{
+    if (m_isPlaying)
+        m_mediaObject->pause();
+    else
+        m_mediaObject->play();
 }
 
 void PlayerBackend::fetchNextSong()
@@ -86,6 +145,12 @@ void PlayerBackend::onStreamingFinished()
     }
 }
 
+void PlayerBackend::onStateChanged(Phonon::State newstate)
+{
+    m_isPlaying = (newstate == Phonon::PlayingState);
+    emit statusChanged();
+}
+
 void PlayerBackend::playNextSong()
 {
     // if there is no data to play, or the stream is still downloading, don't do anything here
@@ -108,7 +173,13 @@ void PlayerBackend::playNextSong()
     m_playBuffer = new QBuffer(&m_playData, this);
     m_mediaObject->enqueue(Phonon::MediaSource(m_playBuffer));
     m_mediaObject->play();
+    emit albumChanged();
 
     // initiate next prefetch
     fetchNextSong();
+}
+
+void PlayerBackend::seekTo(qint64 newTime)
+{
+    m_mediaObject->seek(newTime);
 }
