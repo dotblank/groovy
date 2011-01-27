@@ -13,10 +13,12 @@ INCLUDEPATH += .
 
 # Input
 SOURCES += main.cpp \
-    playerbackend.cpp
+    playerbackend.cpp \
+    qtcachingnetworkaccessmanagerfactory.cpp
 
 HEADERS += \
-    playerbackend.h
+    playerbackend.h \
+    qtcachingnetworkaccessmanagerfactory.h
 
 OTHER_FILES += \
     mainwindow.qml \

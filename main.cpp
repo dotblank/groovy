@@ -16,14 +16,16 @@
  */
 
 #include <QApplication>
-#include <QDeclarativeView>
 #include <QDeclarativeContext>
+#include <QDeclarativeEngine>
+#include <QDeclarativeView>
 
 #include "grooveclient.h"
 #include "groovesong.h"
 #include "groovesearchmodel.h"
 
 #include "playerbackend.h"
+#include "qtcachingnetworkaccessmanagerfactory.h"
 
 int main(int argc, char **argv)
 {
@@ -38,6 +40,8 @@ int main(int argc, char **argv)
     PlayerBackend playerBackend(0, &searchModel);
 
     QDeclarativeView view;
+    QtCachingNetworkAccessManagerFactory qtcnamf;
+    view.engine()->setNetworkAccessManagerFactory(&qtcnamf);
     QDeclarativeContext *context = view.rootContext();
     context->setContextProperty("searchModel", &searchModel);
     context->setContextProperty("playerBackend", &playerBackend);
