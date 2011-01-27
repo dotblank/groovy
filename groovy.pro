@@ -24,6 +24,7 @@ OTHER_FILES += \
     mainwindow.qml \
     groovy-ui/GrooveSongListDelegate.qml \
     groovy-ui/GrooveSearchBar.qml \
+    groovy-ui/GrooveButton.qml \
     groovy-ui/ViewSwitcher.qml \
     groovy-ui/SearchPage.qml \
     groovy-ui/SongViewPage.qml

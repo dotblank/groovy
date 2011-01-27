@@ -5,7 +5,6 @@ Rectangle {
     width: 800
     height: 480
     color: "#000000"
-    x: songViewPage.width // offscreen
 
     Rectangle {
         id: albumInfo
@@ -119,103 +118,43 @@ Rectangle {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
 
-        Rectangle {
+        GrooveButton {
             width: parent.width
-            height: 70
-            color: "#000000"
-
-            Text {
-                anchors.fill: parent
-                text: "Go back"
-                color: "#ffffff"
-                font.pixelSize: 40
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    viewSwitcher.switchView(searchPage, true)
-                }
+            text:  "Go back"
+            onClicked: {
+                viewSwitcher.switchView(searchPage, true)
             }
         }
 
-        Rectangle {
+        GrooveButton {
             width: parent.width
-            height: 70
-            color: "#000000"
-
-            Text {
-                anchors.fill: parent
-                text: "Queue"
-                color: "#ffffff"
-                font.pixelSize: 40
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    playerBackend.queueSong(searchPage.currentIndex)
-                }
+            text: "Queue"
+            onClicked: {
+                playerBackend.queueSong(searchPage.currentIndex);
             }
         }
 
-        Rectangle {
+        GrooveButton {
             width: parent.width
-            height: 70
-            color: "#000000"
-
-            Text {
-                anchors.fill: parent
-                text: "Stop";
-                color: "#ffffff"
-                font.pixelSize: 40
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    playerBackend.stopSong();
-                }
+            text: "Stop"
+            onClicked: {
+                playerBackend.stopSong();
             }
         }
 
-        Rectangle {
+        GrooveButton {
             width: parent.width
-            height: 70
-            color: "#000000"
-
-            Text {
-                anchors.fill: parent
-                text: playerBackend.isPlaying ? "Pause" : "Play";
-                color: "#ffffff"
-                font.pixelSize: 40
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    playerBackend.pausePlaySong();
-                }
+            text: playerBackend.isPlaying ? "Pause" : "Play"
+            onClicked: {
+                playerBackend.pausePlaySong();
             }
         }
 
-        Rectangle {
+        GrooveButton {
             width: parent.width
-            height: 70
-            color: "#000000"
-
-            Text {
-                anchors.fill: parent
-                text: "->|"
-                color: "#ffffff"
-                font.pixelSize: 40
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    playerBackend.playNextSong()
-                }
+            text: ">|"
+            onClicked: {
+                playerBackend.playNextSong();
             }
         }
     }
