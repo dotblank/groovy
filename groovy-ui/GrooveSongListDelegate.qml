@@ -22,7 +22,7 @@ Component {
             onClicked: {
 //                searchPage.selectedRow = index
                 searchList.currentIndex = index
-                viewSwitcher.switchView(songViewPage, true)
+                viewSwitcher.switchView(songViewPage, false)
             }
 
             Image {

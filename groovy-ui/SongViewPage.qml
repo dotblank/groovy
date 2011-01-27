@@ -43,7 +43,7 @@ Rectangle {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    viewSwitcher.switchView(searchPage, false)
+                    viewSwitcher.switchView(searchPage, true)
                 }
             }
         }
