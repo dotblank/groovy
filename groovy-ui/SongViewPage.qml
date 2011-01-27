@@ -23,7 +23,7 @@ Rectangle {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    playerBackend.queueSong(searchList.currentIndex)
+                    playerBackend.queueSong(searchPage.currentIndex)
                 }
             }
         }

@@ -5,6 +5,7 @@ Rectangle {
     width: 800
     height: 480
     color: "#000000"
+    property alias currentIndex: searchList.currentIndex
 
     Rectangle {
         id: searchListContainer
