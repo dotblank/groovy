@@ -20,8 +20,9 @@ Component {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                searchPage.selectedRow = index
+//                searchPage.selectedRow = index
                 searchList.currentIndex = index
+                viewSwitcher.switchView(songViewPage, true)
             }
 
             Image {
