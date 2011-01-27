@@ -2,18 +2,14 @@ import Qt 4.7
 
 Rectangle {
     id: searchPage
-    width: 800
-    height: 480
     color: "#000000"
     property alias currentIndex: searchList.currentIndex
 
     Rectangle {
         id: searchListContainer
-        x: 0
-        y: 65
-        width: 800
-        height: 420
+        anchors.fill: parent
         color: "#000000"
+        anchors.margins: 5
 
         ListView {
             id: searchList
@@ -24,9 +20,5 @@ Rectangle {
 
             }
         }
-    }
-
-    GrooveSearchBar {
-
     }
 }

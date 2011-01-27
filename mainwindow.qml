@@ -6,24 +6,34 @@ Rectangle {
     width: 800
     height: 480
 
-    ViewSwitcher {
-        id: viewSwitcher
-        currentView: searchPage
-     //   root: base
+    Rectangle {
+        y: 50
+        width: parent.width
+        height: parent.height - y
+
+        ViewSwitcher {
+            id: viewSwitcher
+            currentView: searchPage
+         //   root: base
+        }
+
+
+        SearchPage {
+            id: searchPage
+            width: parent.width
+            anchors.top: parent.top; anchors.bottom: parent.bottom
+        }
+
+        SongViewPage {
+            id: songViewPage
+            opacity: 0
+            width: parent.width
+            anchors.top: parent.top; anchors.bottom: parent.bottom
+        }
     }
 
+    GrooveSearchBar {
 
-    SearchPage {
-        id: searchPage
-        width: parent.width
-        anchors.top: parent.top; anchors.bottom: parent.bottom
-    }
-
-    SongViewPage {
-        id: songViewPage
-        opacity: 0
-        width: parent.width
-        anchors.top: parent.top; anchors.bottom: parent.bottom
     }
 }
 

@@ -29,7 +29,6 @@ Component {
                 source: coverArtUrl
                 width: 90
                 height: 90
-                x: 10
 
 //                                onStatusChanged: {
 //                                    console.log(status)
@@ -40,7 +39,7 @@ Component {
 //                                }
             }
             Text {
-                x: 110
+                x: 100
                 color: "#ffffff"
                 text: artist + " - " + title
             }
