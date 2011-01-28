@@ -15,14 +15,14 @@ Component {
         id: songListDelegateItem
         width: ListView.view.width
         height: 100
-        color: "#000000"
+        color: "transparent"
 
         MouseArea {
             anchors.fill: parent
             onClicked: {
 //                searchPage.selectedRow = index
                 searchList.currentIndex = index
-                viewSwitcher.switchView(songViewPage, false)
+                pageStack.push(songViewPage)
             }
 
             Image {

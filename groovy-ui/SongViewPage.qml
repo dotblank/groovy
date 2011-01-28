@@ -2,7 +2,7 @@ import Qt 4.7
 
 Rectangle {
     id: songViewPage
-    color: "#000000"
+    //color: "#000000"
 
     Rectangle {
         id: albumInfo
@@ -120,7 +120,7 @@ Rectangle {
             width: parent.width
             text:  "Go back"
             onClicked: {
-                viewSwitcher.switchView(searchPage, true)
+                pageStack.pop();
             }
         }
 

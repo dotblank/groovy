@@ -35,9 +35,10 @@ UI_GROOVY_UI =  \
     groovy-ui/GrooveSongListDelegate.qml \
     groovy-ui/GrooveSearchBar.qml \
     groovy-ui/GrooveButton.qml \
-    groovy-ui/ViewSwitcher.qml \
     groovy-ui/SearchPage.qml \
-    groovy-ui/SongViewPage.qml
+    groovy-ui/SongViewPage.qml \
+    groovy-ui/PageStack.qml \
+    groovy-ui/PageStack.js
 
 unix:!symbian {
     maemo5 {

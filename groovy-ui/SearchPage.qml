@@ -2,23 +2,26 @@ import Qt 4.7
 
 Rectangle {
     id: searchPage
-    color: "#000000"
+    //color: "#000000"
+    color: "transparent"
     property alias currentIndex: searchList.currentIndex
 
-    Rectangle {
-        id: searchListContainer
-        anchors.fill: parent
-        color: "#000000"
+
+    ListView {
+        id: searchList
+        model: searchModel
+        anchors.left: parent.left
+        anchors.right:  parent.right
+        anchors.bottom: parent.bottom
+        anchors.top:  searchBar.bottom
         anchors.margins: 5
 
-        ListView {
-            id: searchList
-            model: searchModel
-            anchors.fill: parent
+        delegate: GrooveSongListDelegate {
 
-            delegate: GrooveSongListDelegate {
-
-            }
         }
+    }
+
+    GrooveSearchBar {
+        id: searchBar
     }
 }
