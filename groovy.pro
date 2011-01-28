@@ -4,12 +4,21 @@
 
 TEMPLATE = app
 QT += network gui phonon declarative
-CONFIG += link_pkgconfig
-PKGCONFIG += groove QJson
 
 TARGET = 
 DEPENDPATH += .
 INCLUDEPATH += .
+
+if (exists($$PWD/../libgroove) & exists($$PWD/../qjson)) {
+    INCLUDEPATH = $$PWD/../libgroove/include
+    unix:!symbian:maemo5 {
+        message("Hidious workaround! The maemo5 toolchain does something wrong with -L/-l.")
+        LIBS += $$OUT_PWD/../libgroove/src/libgroove.so $$OUT_PWD/../qjson/lib/libqjson.so
+    } else: LIBS += -L$$OUT_PWD/../libgroove/src -lgroove -L$$OUT_PWD/../qjson/lib -lqjson
+} else {
+    CONFIG += link_pkgconfig
+    PKGCONFIG += groove QJson
+}
 
 # Input
 SOURCES += main.cpp \
@@ -20,11 +29,30 @@ HEADERS += \
     playerbackend.h \
     qtcachingnetworkaccessmanagerfactory.h
 
-OTHER_FILES += \
-    mainwindow.qml \
+UI_MAIN = mainwindow.qml
+
+UI_GROOVY_UI =  \
     groovy-ui/GrooveSongListDelegate.qml \
     groovy-ui/GrooveSearchBar.qml \
     groovy-ui/GrooveButton.qml \
     groovy-ui/ViewSwitcher.qml \
     groovy-ui/SearchPage.qml \
     groovy-ui/SongViewPage.qml
+
+unix:!symbian {
+    maemo5 {
+        target.path = /opt/usr/bin
+    } else {
+        target.path = /usr/local/bin
+    }
+
+    qmlmain.files = $$UI_MAIN
+    qmlmain.path = /home/developer
+
+    qmlui.files = $$UI_GROOVY_UI
+    qmlui.path = /home/developer/groovy-ui
+
+    INSTALLS += target qmlmain qmlui
+}
+
+OTHER_FILES += $$UI_MAIN $$UI_GROOVY_UI-UI
