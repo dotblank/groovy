@@ -1,10 +1,9 @@
 #ifndef PLAYERBACKEND_H
 #define PLAYERBACKEND_H
 
+#include <QMediaPlayer>
 #include <QObject>
 #include <QModelIndex>
-#include <QBuffer>
-#include <phonon>
 #include <QNetworkReply>
 
 #include <grooveplaylistmodel.h>
@@ -35,7 +34,6 @@ public slots:
     void queueSong(int index);
     void stopSong();
     void pausePlaySong();
-    void playNextSong();
     void seekTo(qint64 newTime);
 
 signals:
@@ -48,15 +46,12 @@ private slots:
     void onStreamingStarted(QIODevice *);
     void onStreamReadReady();
     void onStreamingFinished();
-    void onStateChanged(Phonon::State newstate);
+    void onStateChanged(QMediaPlayer::State newstate);
 
 private:
     GrooveSearchModel *m_searchModel;
     GroovePlaylistModel m_playlistModel;
-    Phonon::MediaObject *m_mediaObject;
-    QBuffer *m_playBuffer;
-    QByteArray m_preloadData;
-    QByteArray m_playData;
+    QMediaPlayer *m_mediaPlayer;
 
     bool m_nowStreaming;
     bool m_isPlaying;

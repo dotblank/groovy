@@ -3,7 +3,10 @@
 ######################################################################
 
 TEMPLATE = app
-QT += network gui phonon declarative
+QT += network gui declarative
+
+CONFIG += mobility
+MOBILITY += multimedia
 
 TARGET = 
 DEPENDPATH += .
