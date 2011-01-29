@@ -41,7 +41,8 @@ UI_GROOVY_UI =  \
     groovy-ui/SearchPage.qml \
     groovy-ui/SongViewPage.qml \
     groovy-ui/PageStack.qml \
-    groovy-ui/PageStack.js
+    groovy-ui/PageStack.js \
+    groovy-ui/NowPlayingPage.qml
 
 unix:!symbian {
     maemo5 {

@@ -29,9 +29,11 @@ public:
     qint64 currentTimeMS();
     QString currentTime();
     QString currentTimeLeft();
+    GroovePlaylistModel *playlistModel() const;
 
 public slots:
     void queueSong(int index);
+    void skipTo(int trackIndex);
     void stopSong();
     void pausePlaySong();
     void seekTo(qint64 newTime);
@@ -50,7 +52,7 @@ private slots:
 
 private:
     GrooveSearchModel *m_searchModel;
-    GroovePlaylistModel m_playlistModel;
+    GroovePlaylistModel *m_playlistModel;
     QMediaPlayer *m_mediaPlayer;
 
     bool m_nowStreaming;

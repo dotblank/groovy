@@ -45,6 +45,7 @@ int main(int argc, char **argv)
     QDeclarativeContext *context = view.rootContext();
     context->setContextProperty("searchModel", &searchModel);
     context->setContextProperty("playerBackend", &playerBackend);
+    context->setContextProperty("playlistModel", playerBackend.playlistModel());
 
     view.setSource(QUrl::fromLocalFile("mainwindow.qml"));
     view.show();

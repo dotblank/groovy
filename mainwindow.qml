@@ -44,6 +44,14 @@ Rectangle {
             anchors.top: parent.top; anchors.bottom: parent.bottom
             visible: false
         }
+
+        NowPlayingPage {
+            id: nowPlayingPage
+            width: parent.width
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            visible: false
+        }
     }
 
 
@@ -112,7 +120,7 @@ Rectangle {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                pageStack.replace(songViewPage)
+                pageStack.replace(nowPlayingPage)
             }
         }
     }

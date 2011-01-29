@@ -9,6 +9,7 @@
 PlayerBackend::PlayerBackend(QObject *parent, GrooveSearchModel *searchModel)
     : QObject(parent)
     , m_searchModel(searchModel)
+    , m_playlistModel(new GroovePlaylistModel(this))
     , m_mediaPlayer(new QMediaPlayer(this))
     , m_nowStreaming(false)
     , m_isPlaying(false)
@@ -26,7 +27,7 @@ bool PlayerBackend::isPlaying()
 
 QUrl PlayerBackend::albumArt()
 {
-    GrooveSong *song = m_playlistModel.currentTrack();
+    GrooveSong *song = m_playlistModel->currentTrack();
     return (song ? song->coverArtUrl() : QUrl());
 }
 
@@ -65,7 +66,7 @@ void PlayerBackend::queueSong(int index)
     GrooveSong *song = m_searchModel->songByIndex(m_searchModel->index(index, 0, QModelIndex()));
     qDebug() << Q_FUNC_INFO << "Queueing " << song->songName();
 
-    m_playlistModel.append(song);
+    m_playlistModel->append(song);
 
     if (!m_isPlaying)
         fetchNextSong();
@@ -93,7 +94,7 @@ void PlayerBackend::fetchNextSong()
         return;
     }
 
-    GrooveSong *song = m_playlistModel.next();
+    GrooveSong *song = m_playlistModel->next();
 
     if (!song) {
         // end of the playlist, for now!
@@ -152,4 +153,18 @@ void PlayerBackend::onStateChanged(QMediaPlayer::State newstate)
 void PlayerBackend::seekTo(qint64 newTime)
 {
     m_mediaPlayer->setPosition(newTime);
+}
+
+GroovePlaylistModel *PlayerBackend::playlistModel() const
+{
+    return m_playlistModel;
+}
+
+void PlayerBackend::skipTo(int trackIndex)
+{
+    stopSong();
+    m_nowStreaming = false;
+    m_mediaPlayer->setMedia(QMediaContent());
+    m_playlistModel->setCurrentTrackIndex(trackIndex);
+    fetchNextSong();
 }
