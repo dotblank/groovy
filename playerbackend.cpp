@@ -107,7 +107,7 @@ void PlayerBackend::fetchNextSong()
     m_nowStreaming = true;
     // TODO: handle error case to reset m_nowStreaming
 
-    connect(song, SIGNAL(streamingStarted(QIODevice*)), SLOT(onStreamingStarted(QIODevice*)));
+    connect(song, SIGNAL(streamingStarted(QIODevice*)), SLOT(onStreamingStarted(QIODevice*)), Qt::UniqueConnection);
     song->startStreaming();
 }
 
